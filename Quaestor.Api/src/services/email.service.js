@@ -7,8 +7,15 @@ const transport = nodemailer.createTransport(config.email.smtp);
 if (config.env !== 'test') {
   transport
     .verify()
-    .then(() => logger.info('Connected to email server'))
-    .catch(() => logger.warn('Unable to connect to email server. Make sure you have configured the SMTP options in .env'));
+    .then((success) => {
+      logger.info(`Verify returned success: ${success}`);
+      logger.info(`Connected to email server on port ${config.email.smtp.port}`);
+    })
+    .catch((error) => {
+      logger.warn(`Verify returned: ${error}`);
+      logger.warn(`Unable to connect to email server on port ${config.email.smtp.port}`);
+      logger.warn('Make sure you have configured the SMTP options in .env');
+    });
 }
 
 /**

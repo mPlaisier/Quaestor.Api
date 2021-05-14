@@ -12,7 +12,7 @@ router
   .post(auth(), validate(shopTypeValidation.createShopType), shopTypeController.createShopType);
 
 router
-  .route('/:shopId')
+  .route('/:shopTypeId')
   .patch(
     auth(),
     validate(shopTypeValidation.updateShopType),

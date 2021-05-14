@@ -17,7 +17,7 @@ const createShopType = {
 
 const updateShopType = {
   params: Joi.object().keys({
-    shopId: Joi.required().custom(objectId),
+    shopTypeId: Joi.required().custom(objectId),
   }),
   body: Joi.object().keys({
     name: Joi.string().required(),
@@ -26,7 +26,7 @@ const updateShopType = {
 
 const deleteShopType = {
   params: Joi.object().keys({
-    shopId: Joi.string().custom(objectId),
+    shopTypeId: Joi.string().custom(objectId),
   }),
 };
 

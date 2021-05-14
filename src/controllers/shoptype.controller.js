@@ -17,7 +17,7 @@ const getShopTypes = catchAsync(async (req, res) => {
 });
 
 const getShopType = catchAsync(async (req, res, next) => {
-  const shopType = await shopTypeService.getShopTypeById(req.params.shopId);
+  const shopType = await shopTypeService.getShopTypeById(req.params.shopTypeId);
   if (!shopType) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Shop type not found');
   }

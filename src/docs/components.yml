@@ -39,6 +39,33 @@ components:
         refresh:
           $ref: '#/components/schemas/Token'
 
+    Shop:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        shopType:
+          $ref: '#/components/schemas/ShopType'
+      example:
+        id: 5ebac534954b54139806c112
+        name: Carrefour
+        shopType: 
+          id: 5ebac534954b54139806c112
+          name: Supermarket
+
+    ShopType:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+      example:
+        id: 5ebac534954b54139806c112
+        name: Supermarket
+
     Error:
       type: object
       properties:

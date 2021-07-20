@@ -3,83 +3,76 @@ const faker = require('faker');
 const httpStatus = require('http-status');
 const app = require('../../src/app');
 const setupTestDB = require('../utils/setupTestDB');
-const { ShopType } = require('../../src/models');
+const { Shop } = require('../../src/models');
 const { userOne, userTwo, insertUsers } = require('../fixtures/user.fixture');
 const { userOneAccessToken } = require('../fixtures/token.fixture');
-const { shopTypeOne, shopTypeTwo, shopTypeThree, insertShopTypes } = require('../fixtures/shoptype.fixture');
+const { createShop, shopOne, shopTwo, shopThree, insertShops } = require('../fixtures/shop.fixture');
 
 setupTestDB();
 
-describe('ShopType routes', () => {
-  describe('POST /v1/shoptype', () => {
-    let newShopType;
-
-    beforeEach(() => {
-      newShopType = {
-        name: faker.name.findName(),
-      };
-    });
-
-    test('should return 201 and successfully create new shopType if data is ok', async () => {
+describe('Shop routes', () => {
+  describe('POST /v1/shop', () => {
+    test('should return 201 and successfully create new shop if data is ok', async () => {
       await insertUsers([userOne]);
 
       const res = await request(app)
-        .post('/v1/shoptype')
+        .post('/v1/shop')
         .set('Authorization', `Bearer ${userOneAccessToken}`)
-        .send(newShopType)
+        .send(createShop)
         .expect(httpStatus.CREATED);
 
       expect(res.body).not.toHaveProperty('user');
       expect(res.body).toEqual({
         id: expect.anything(),
-        name: newShopType.name,
+        name: createShop.name,
+        shopType: createShop.shopType.toHexString(),
       });
 
-      const dbShopType = await ShopType.findById(res.body.id);
-      expect(dbShopType).toBeDefined();
-      expect(dbShopType).toMatchObject({
-        name: newShopType.name,
+      const dbShop = await Shop.findById(res.body.id);
+      expect(dbShop).toBeDefined();
+      expect(dbShop).toMatchObject({
+        name: createShop.name,
       });
     });
 
     test('should return 401 error if access token is missing', async () => {
-      await request(app).post('/v1/users').send(newShopType).expect(httpStatus.UNAUTHORIZED);
+      await request(app).post('/v1/users').send(createShop).expect(httpStatus.UNAUTHORIZED);
     });
 
     test('should return 400 error if name is missing', async () => {
       await insertUsers([userOne]);
 
-      newShopType = {};
+      const newShop = {};
 
       await request(app)
-        .post('/v1/shoptype')
+        .post('/v1/shop')
         .set('Authorization', `Bearer ${userOneAccessToken}`)
-        .send(newShopType)
+        .send(newShop)
         .expect(httpStatus.BAD_REQUEST);
     });
 
     test('should return 400 error if name is invalid', async () => {
       await insertUsers([userOne]);
 
-      newShopType = {
+      const newShop = {
         name: '',
       };
 
       await request(app)
-        .post('/v1/shoptype')
+        .post('/v1/shop')
         .set('Authorization', `Bearer ${userOneAccessToken}`)
-        .send(newShopType)
+        .send(newShop)
         .expect(httpStatus.BAD_REQUEST);
     });
   });
 
-  describe('GET /v1/shoptype', () => {
+  describe('GET /v1/shop', () => {
     test('should return 200 and apply the default query options', async () => {
       await insertUsers([userOne]);
-      await insertShopTypes([shopTypeOne, shopTypeTwo, shopTypeThree], userOne);
+      await insertShops([shopOne, shopTwo, shopThree], userOne);
 
       const res = await request(app)
-        .get('/v1/shoptype')
+        .get('/v1/shop')
         .set('Authorization', `Bearer ${userOneAccessToken}`)
         .send()
         .expect(httpStatus.OK);
@@ -93,22 +86,22 @@ describe('ShopType routes', () => {
       });
       expect(res.body.results).toHaveLength(3);
       expect(res.body.results[0]).toEqual({
-        id: shopTypeOne._id.toHexString(),
-        name: shopTypeOne.name,
+        id: shopOne._id.toHexString(),
+        name: shopOne.name,
       });
     });
 
     test('should return 401 error if access token is missing', async () => {
-      await request(app).get('/v1/shoptype').send().expect(httpStatus.UNAUTHORIZED);
+      await request(app).get('/v1/shop').send().expect(httpStatus.UNAUTHORIZED);
     });
 
     test('should only return the shop types of the user', async () => {
       await insertUsers([userOne, userTwo]);
-      await insertShopTypes([shopTypeOne, shopTypeTwo], userOne);
-      await insertShopTypes([shopTypeThree], userTwo);
+      await insertShops([shopOne, shopTwo], userOne);
+      await insertShops([shopThree], userTwo);
 
       const res = await request(app)
-        .get('/v1/shoptype')
+        .get('/v1/shop')
         .set('Authorization', `Bearer ${userOneAccessToken}`)
         .send()
         .expect(httpStatus.OK);
@@ -124,61 +117,61 @@ describe('ShopType routes', () => {
     });
   });
 
-  describe('PATCH /v1/shoptype/:shoptypeId', () => {
-    test('should return 200 and successfully update shopType', async () => {
+  describe('PATCH /v1/shop/:shopId', () => {
+    test('should return 200 and successfully update shop', async () => {
       await insertUsers([userOne]);
-      await insertShopTypes([shopTypeOne], userOne);
+      await insertShops([shopOne], userOne);
 
       const updateBody = {
         name: faker.name.findName(),
       };
 
       const res = await request(app)
-        .patch(`/v1/shoptype/${shopTypeOne._id}`)
+        .patch(`/v1/shop/${shopOne._id}`)
         .set('Authorization', `Bearer ${userOneAccessToken}`)
         .send(updateBody)
         .expect(httpStatus.OK);
 
       expect(res.body).toEqual({
-        id: shopTypeOne._id.toHexString(),
+        id: shopOne._id.toHexString(),
         name: updateBody.name,
       });
 
-      const shopType = await ShopType.find(shopTypeOne._id);
-      expect(shopType).toBeDefined();
+      const shop = await Shop.find(shopOne._id);
+      expect(shop).toBeDefined();
     });
 
     test('should return 401 error if access token is missing', async () => {
       await insertUsers([userOne]);
-      await insertShopTypes([shopTypeOne], userOne);
+      await insertShops([shopOne], userOne);
 
       const updateBody = {
         name: faker.name.findName(),
       };
 
-      await request(app).patch(`/v1/shoptype/${shopTypeOne._id}`).send(updateBody).expect(httpStatus.UNAUTHORIZED);
+      await request(app).patch(`/v1/shop/${shopOne._id}`).send(updateBody).expect(httpStatus.UNAUTHORIZED);
     });
 
-    test('should return 403 if user is updating shoptype of other user', async () => {
+    test('should return 403 if user is updating shop of other user', async () => {
       await insertUsers([userOne, userTwo]);
-      await insertShopTypes([shopTypeOne], userOne);
-      await insertShopTypes([shopTypeTwo], userTwo);
+      await insertShops([shopOne], userOne);
+      await insertShops([shopTwo], userTwo);
 
       const updateBody = { name: faker.name.findName() };
 
       await request(app)
-        .patch(`/v1/shoptype/${shopTypeTwo._id}`)
+        .patch(`/v1/shop/${shopTwo._id}`)
         .set('Authorization', `Bearer ${userOneAccessToken}`)
         .send(updateBody)
         .expect(httpStatus.FORBIDDEN);
     });
 
-    test('should return 404 if user is updating shoptype that is not found', async () => {
+    test('should return 404 if user is updating shop that is not found', async () => {
       await insertUsers([userOne]);
       const updateBody = { name: faker.name.findName() };
 
       await request(app)
-        .patch(`/v1/shoptype/${shopTypeOne._id}`)
+        .patch(`/v1/shop/${shopOne._id}`)
         .set('Authorization', `Bearer ${userOneAccessToken}`)
         .send(updateBody)
         .expect(httpStatus.NOT_FOUND);
@@ -189,52 +182,52 @@ describe('ShopType routes', () => {
       const updateBody = { name: faker.name.findName() };
 
       await request(app)
-        .patch(`/v1/shoptype/invalidId`)
+        .patch(`/v1/shop/invalidId`)
         .set('Authorization', `Bearer ${userOneAccessToken}`)
         .send(updateBody)
         .expect(httpStatus.BAD_REQUEST);
     });
   });
 
-  describe('DELETE /v1/shoptype/:shoptypeId', () => {
+  describe('DELETE /v1/shop/:shopId', () => {
     test('should return 204 if data is ok', async () => {
       await insertUsers([userOne]);
-      await insertShopTypes([shopTypeOne], userOne);
+      await insertShops([shopOne], userOne);
 
       await request(app)
-        .delete(`/v1/shoptype/${shopTypeOne._id}`)
+        .delete(`/v1/shop/${shopOne._id}`)
         .set('Authorization', `Bearer ${userOneAccessToken}`)
         .send()
         .expect(httpStatus.NO_CONTENT);
 
-      const shopType = await ShopType.findById(shopTypeOne._id);
-      expect(shopType).toBeNull();
+      const shop = await Shop.findById(shopOne._id);
+      expect(shop).toBeNull();
     });
 
     test('should return 401 error if access token is missing', async () => {
       await insertUsers([userOne]);
-      await insertShopTypes([shopTypeOne], userOne);
+      await insertShops([shopOne], userOne);
 
-      await request(app).delete(`/v1/shoptype/${shopTypeOne._id}`).send().expect(httpStatus.UNAUTHORIZED);
+      await request(app).delete(`/v1/shop/${shopOne._id}`).send().expect(httpStatus.UNAUTHORIZED);
     });
 
-    test('should return 403 if user is deleting shoptype of other user', async () => {
+    test('should return 403 if user is deleting shop of other user', async () => {
       await insertUsers([userOne, userTwo]);
-      await insertShopTypes([shopTypeOne], userOne);
-      await insertShopTypes([shopTypeTwo], userTwo);
+      await insertShops([shopOne], userOne);
+      await insertShops([shopTwo], userTwo);
 
       await request(app)
-        .delete(`/v1/shoptype/${shopTypeTwo._id}`)
+        .delete(`/v1/shop/${shopTwo._id}`)
         .set('Authorization', `Bearer ${userOneAccessToken}`)
         .send()
         .expect(httpStatus.FORBIDDEN);
     });
 
-    test('should return 404 if user is deleting shoptype that is not found', async () => {
+    test('should return 404 if user is deleting shop that is not found', async () => {
       await insertUsers([userOne]);
 
       await request(app)
-        .delete(`/v1/shoptype/${shopTypeOne._id}`)
+        .delete(`/v1/shop/${shopOne._id}`)
         .set('Authorization', `Bearer ${userOneAccessToken}`)
         .send()
         .expect(httpStatus.NOT_FOUND);
@@ -244,7 +237,7 @@ describe('ShopType routes', () => {
       await insertUsers([userOne]);
 
       await request(app)
-        .delete(`/v1/shoptype/invalidId`)
+        .delete(`/v1/shop/invalidId`)
         .set('Authorization', `Bearer ${userOneAccessToken}`)
         .send()
         .expect(httpStatus.BAD_REQUEST);

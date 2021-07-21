@@ -24,9 +24,6 @@ const queryShops = async (filter, options) => {
   const optionsWithPopulate = options;
   optionsWithPopulate.populate = 'shopType';
 
-  // eslint-disable-next-line no-console
-  console.log(optionsWithPopulate);
-
   const shops = await Shop.paginate(filter, optionsWithPopulate);
   return shops;
 };

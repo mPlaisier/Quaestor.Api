@@ -1,9 +1,14 @@
 const express = require('express');
+
+// Production routes
 const authRoute = require('./auth.route');
 const userRoute = require('./user.route');
 const shopTypeRoute = require('./shoptype.route');
 const shopRoute = require('./shop.route');
+const accountRoute = require('./account.route');
+// Dev routes
 const docsRoute = require('./docs.route');
+
 const config = require('../../config/config');
 
 const router = express.Router();
@@ -24,6 +29,10 @@ const defaultRoutes = [
   {
     path: '/shop',
     route: shopRoute,
+  },
+  {
+    path: '/account',
+    route: accountRoute,
   },
 ];
 

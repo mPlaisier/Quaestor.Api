@@ -73,10 +73,17 @@ components:
           type: string
         name:
           type: string
+        accountType:
+          type: string
+          enum: [Bank, Mealvouchers, Cash, Savings, Investment]
+        isDefault:
+          type: boolean
+          default: false
       example:
         id: 5ebac534954b54139806c112
         name: Main account
-
+        accountType: Bank
+        isDefault: false
     Error:
       type: object
       properties:

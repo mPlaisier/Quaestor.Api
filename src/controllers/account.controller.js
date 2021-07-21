@@ -26,9 +26,6 @@ const getAccount = catchAsync(async (req, res, next) => {
     throw new ApiError(httpStatus.FORBIDDEN, 'Forbidden');
   }
 
-  logger.info('Result:');
-  logger.info(result);
-
   res.account = result;
   next();
 });

@@ -38,7 +38,7 @@ const defaultRoutes = [
   {
     path: '/lineitemcategory',
     route: lineItemCategoryRoute,
-  }
+  },
 ];
 
 const devRoutes = [

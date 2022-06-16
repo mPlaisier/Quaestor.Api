@@ -1,5 +1,7 @@
 /* eslint-disable no-param-reassign */
 
+const logger = require('../../config/logger');
+
 const paginate = (schema) => {
   /**
    * @typedef {Object} QueryResult
@@ -41,6 +43,15 @@ const paginate = (schema) => {
 
     if (options.populate) {
       options.populate.split(',').forEach((populateOption) => {
+        logger.info('Populate option');
+        logger.info(populateOption);
+
+        const temp = populateOption
+          .split('.')
+          .reverse()
+          .reduce((a, b) => ({ path: b, populate: a }));
+        logger.info(JSON.stringify(temp));
+
         docsPromise = docsPromise.populate(
           populateOption
             .split('.')

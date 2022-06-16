@@ -66,6 +66,67 @@ components:
         id: 5ebac534954b54139806c112
         name: Supermarket
 
+    LineContainer:
+      type: object
+      properties:
+        id:
+          type: string
+        date:
+          type: date
+        shop:
+          $ref: '#/components/schemas/Shop'
+        amount:
+          type: number
+          format: currency
+        month:
+          type: integer
+          minimum: 1
+          maximum: 12
+        year:
+          type: integer
+          minimum: 2019
+          maximum: 2100
+        lineItems:
+          type: array
+          items:
+            $ref: '#/components/schemas/LineContainerItem'
+      example:
+        id: 5ebac534954b54139806c112
+        date: 2021-06-07T22:00:00.000Z
+        shop: 61067724913d172b5c710f6d
+        totalAmount: 15.65
+        month: 2
+        year: 2019
+        lineItems: [
+          description: "description",
+          lineCategory: 610fac49091cbeb604285c9f,
+          amount: 15.95,
+          account: 60f80fd394c17ebd20f51dd1,
+          paymentType: Expense
+        ]
+
+    LineContainerItem:
+      type: object
+      properties:
+        description:
+          type: string
+        lineCategory:
+          $ref: '#/components/schemas/LineItemCategory'
+        amount:
+          type: number
+          format: currency
+        account:
+          $ref: '#/components/schemas/Account'
+        paymentType:
+          type: string
+          enum: [Income, Expense, Cashflow]
+      example:
+        description: "description"
+        lineCategory: 610fac49091cbeb604285c9f
+        amount: 15.95
+        account: 60f80fd394c17ebd20f51dd1
+        paymentType: Expense
+    
     LineItemCategory:
       type: object
       properties:
@@ -95,6 +156,7 @@ components:
         name: Main account
         accountType: Bank
         isDefault: false
+    
     Error:
       type: object
       properties:

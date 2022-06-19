@@ -157,6 +157,31 @@ components:
         accountType: Bank
         isDefault: false
     
+    Goal:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        amount:
+          type: number
+          format: currency
+        account:
+          $ref: '#/components/schemas/Account'
+        paymentType:
+          type: string
+          enum: [AmountSaved, AmountReached]
+      example:
+        id: 5ebac534954b54139806c112
+        name: Savings
+        description: Amount I want to save this year
+        amount: 3000.00
+        account: 610fac49091cbeb604285c9f
+        paymentType: AmountSaved
+
     Error:
       type: object
       properties:

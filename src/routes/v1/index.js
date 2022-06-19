@@ -8,6 +8,7 @@ const shopRoute = require('./shop.route');
 const accountRoute = require('./account.route');
 const lineItemCategoryRoute = require('./lineitemcategory.route');
 const lineContainerRoute = require('./lineContainer.route');
+const goalRoute = require('./goal.route');
 // Dev routes
 const docsRoute = require('./docs.route');
 
@@ -43,6 +44,10 @@ const defaultRoutes = [
   {
     path: '/lineContainer',
     route: lineContainerRoute,
+  },
+  {
+    path: '/goal',
+    route: goalRoute,
   },
 ];
 

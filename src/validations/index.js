@@ -5,3 +5,4 @@ module.exports.shopValidation = require('./shop.validation');
 module.exports.accountValidation = require('./account.validation');
 module.exports.lineItemCategoryValidation = require('./lineitemcategory.validation');
 module.exports.lineContainerValidation = require('./lineContainer.validation');
+module.exports.goalValidation = require('./goal.validation');

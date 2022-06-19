@@ -2,13 +2,7 @@ const mongoose = require('mongoose');
 const mongoosePaginate = require('mongoose-paginate-v2');
 const { toJSON } = require('./plugins');
 const { paymentTypes } = require('../config/enums');
-
-function getAmount(value) {
-  if (typeof value !== 'undefined') {
-    return parseFloat(value.toString());
-  }
-  return value;
-}
+const decimalConverter = require('../utils/decimalConverter');
 
 const lineContainerItem = new mongoose.Schema(
   {
@@ -29,7 +23,7 @@ const lineContainerItem = new mongoose.Schema(
     amount: {
       type: mongoose.Decimal128,
       required: true,
-      get: getAmount,
+      get: decimalConverter,
     },
     account: {
       type: mongoose.Schema.Types.ObjectId,
@@ -60,7 +54,7 @@ const lineContainerSchema = new mongoose.Schema(
     totalAmount: {
       type: mongoose.Decimal128,
       required: true,
-      get: getAmount,
+      get: decimalConverter,
     },
     month: {
       type: Number,

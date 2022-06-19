@@ -7,3 +7,4 @@ module.exports.shopService = require('./shop.service');
 module.exports.accountService = require('./account.service');
 module.exports.lineItemCategoryService = require('./lineitemcategory.service');
 module.exports.lineContainerService = require('./lineContainer.service');
+module.exports.goalService = require('./goal.service');
